@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpaFlix — For Angelina</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0f0f0f;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    position: fixed;
+    inset: 0;
+    background: #0f0f0f;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    transition: opacity 1s ease;
+  }
+
+  .intro-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 15vw, 90px);
+    color: #E50914;
+    letter-spacing: 4px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+
+  .intro-tagline {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(13px, 3vw, 18px);
+    color: #888;
+    letter-spacing: 0.15em;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.9s forwards;
+    margin-top: 8px;
+  }
+
+  .intro-bar {
+    width: 0;
+    height: 2px;
+    background: #E50914;
+    margin-top: 28px;
+    animation: barGrow 1.8s ease 1.4s forwards;
+  }
+
+  @keyframes barGrow { to { width: 120px; } }
+
+  .intro-for {
+    font-size: clamp(11px, 2.5vw, 14px);
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #555;
+    margin-top: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 2s forwards;
+  }
+
+  .intro-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 11vw, 64px);
+    color: #fff;
+    opacity: 0;
+    animation: fadeUp 1s ease 2.5s forwards;
+    font-style: italic;
+  }
+
+  /* ── MAIN APP ── */
+  #app { display: none; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: #E50914;
+    letter-spacing: 3px;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 16px;
+    list-style: none;
+  }
+
+  .nav-links li {
+    font-size: 12px;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .nav-links li:hover { color: #fff; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 28px 100px;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, rgba(15,15,15,0.98) 35%, rgba(15,15,15,0.3) 75%, rgba(15,15,15,0.6) 100%),
+      linear-gradient(to top, rgba(15,15,15,1) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 40%, #3d0a0a 0%, #1a0505 35%, #0f0f0f 70%);
+  }
+
+  /* Floating ember particles */
+  .embers {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .ember {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff6b35, #E50914);
+    animation: emberFloat linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes emberFloat {
+    0% { transform: translateY(100vh) scale(1); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-20px) scale(0.3); opacity: 0; }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 520px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #E50914;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 14px;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 14vw, 96px);
+    line-height: 0.92;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    text-shadow: 2px 4px 30px rgba(0,0,0,0.8);
+  }
+
+  .hero-title .red { color: #E50914; }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .match { color: #46d369; font-size: 13px; font-weight: 600; }
+  .meta-tag {
+    font-size: 11px;
+    color: #aaa;
+    border: 1px solid #444;
+    padding: 2px 7px;
+    border-radius: 2px;
+  }
+
+  .hero-desc {
+    font-size: clamp(13px, 3vw, 15px);
+    font-style: italic;
+    font-weight: 300;
+    color: #ccc;
+    line-height: 1.65;
+    margin-bottom: 22px;
+    max-width: 400px;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn-play {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 26px;
+    background: #fff;
+    color: #000;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .btn-play:hover { background: #ddd; }
+
+  .btn-more {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    background: rgba(100,100,100,0.5);
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    backdrop-filter: blur(6px);
+    transition: background 0.2s;
+  }
+  .btn-more:hover { background: rgba(100,100,100,0.7); }
+
+  .hero-cast {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+  }
+  .hero-cast span { color: #bbb; }
+
+  /* ROW SECTION */
+  .section {
+    padding: 0 24px 48px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  .card-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+  }
+  .card-row::-webkit-scrollbar { display: none; }
+
+  .card {
+    flex: 0 0 160px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover { transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+
+  .card-img {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+  }
+
+  .card-info {
+    background: #1a1a1a;
+    padding: 8px 10px 10px;
+  }
+
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .card-sub {
+    font-size: 10px;
+    color: #777;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: #181818;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;
+    overflow: hidden;
+    transform: scale(0.93) translateY(10px);
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .modal-overlay.open .modal {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-hero {
+    height: 190px;
+    background: linear-gradient(135deg, #2d0505, #1a0000, #0f0f0f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .modal-hero-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: #E50914;
+    letter-spacing: 4px;
+    text-shadow: 0 0 40px rgba(229,9,20,0.5);
+    z-index: 2;
+    position: relative;
+  }
+
+  /* Modal ember particles */
+  .modal-ember {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff6b35, #E50914);
+    animation: emberFloat linear infinite;
+    opacity: 0;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 30px; height: 30px;
+    background: rgba(0,0,0,0.6);
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  .modal-body { padding: 22px 24px 28px; }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px;
+    letter-spacing: 2px;
+    margin-bottom: 2px;
+  }
+
+  .modal-tagline {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 20px;
+  }
+
+  /* Messages — word flow */
+  .messages {
+    margin-bottom: 22px;
+  }
+
+  .msg-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #222;
+    align-items: flex-start;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .msg-item.show { opacity: 1; transform: translateY(0); }
+  .msg-item:last-child { border-bottom: none; }
+
+  .msg-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: #E50914;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 24px;
+  }
+
+  .msg-text {
+    font-size: clamp(13px, 3.5vw, 15px);
+    font-style: italic;
+    font-weight: 300;
+    color: #ddd;
+    line-height: 1.65;
+    padding-top: 2px;
+  }
+
+  /* Word animation */
+  .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .word.flow { opacity: 1; transform: translateY(0); }
+
+  .modal-divider {
+    height: 1px;
+    background: linear-gradient(90deg, #E50914, transparent);
+    margin: 20px 0;
+  }
+
+  /* Details grid */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: #222;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .detail-cell {
+    background: #141414;
+    padding: 13px 16px;
+  }
+
+  .detail-cell-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #E50914;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  .detail-cell-val {
+    font-size: clamp(13px, 3.5vw, 15px);
+    color: #f0f0f0;
+    font-weight: 300;
+    line-height: 1.35;
+  }
+
+  .maps-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    border: 1px solid #E5091444;
+    color: #E50914;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.3s, border-color 0.3s;
+    margin-bottom: 20px;
+  }
+  .maps-btn:hover { background: rgba(229,9,20,0.08); border-color: #E50914aa; }
+
+  .modal-closing {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(14px, 3.5vw, 17px);
+    color: #888;
+    text-align: center;
+    line-height: 1.8;
+    border-top: 1px solid #222;
+    padding-top: 18px;
+  }
+
+  .modal-closing em { color: #E50914; font-style: normal; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-logo">SpaFlix</div>
+  <div class="intro-tagline">A night made just for you</div>
+  <div class="intro-bar"></div>
+  <div class="intro-for">Now Streaming For</div>
+  <div class="intro-name">Angelina</div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <nav>
+    <div class="nav-logo">SpaFlix</div>
+    <ul class="nav-links">
+      <li>Home</li>
+      <li>For You</li>
+      <li>Romance</li>
+      <li>Wellness</li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="embers" id="embers"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">✦ Exclusive — Just For You Tonight</div>
+      <div class="hero-title">Angelina's<br><span class="red">Hot Stone</span><br>Evening</div>
+      <div class="hero-meta">
+        <span class="match">💖 100% Match</span>
+        <span class="meta-tag">2026</span>
+        <span class="meta-tag">TV-Luxe</span>
+        <span class="meta-tag">1h 30m</span>
+      </div>
+      <div class="hero-desc">
+        You've been working so hard ya Angelina, especially with your study week coming up, and I see how much effort you put into everything without ever complaining or asking for anything. You're always pushing yourself and that's exactly why you deserve this and much more. A night to slow down, breathe, and just be taken care of. No stress, no responsibilities, just you.
+      </div>
+      <div class="hero-btns">
+        <button class="btn-play" onclick="openModal()">▶ &nbsp;Open Surprise</button>
+        <button class="btn-more" onclick="openModal()">ℹ &nbsp;More Info</button>
+      </div>
+      <div class="hero-cast">
+        Starring: <span>Angelina</span> &nbsp;·&nbsp; Directed by: <span>Someone Who Adores You</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROWS -->
+  <div class="section">
+    <div class="section-title">Also Recommended For You</div>
+    <div class="card-row">
+      <div class="card">
+        <div class="card-img" style="background:linear-gradient(135deg,#1a0808,#3d1010)">🔥</div>
+        <div class="card-info"><div class="card-title">Hot Stone Chronicles</div><div class="card-sub">Season 1</div></div>
+      </div>
+      <div class="card">
+        <div class="card-img" style="background:linear-gradient(135deg,#0d1a10,#1a3020)">🌿</div>
+        <div class="card-info"><div class="card-title">Aroma Diaries</div><div class="card-sub">New Episode</div></div>
+      </div>
+      <div class="card">
+        <div class="card-img" style="background:linear-gradient(135deg,#1a1008,#3d2510)">🕯️</div>
+        <div class="card-info"><div class="card-title">Candlelit Evenings</div><div class="card-sub">Series</div></div>
+      </div>
+      <div class="card">
+        <div class="card-img" style="background:linear-gradient(135deg,#0d0d1a,#1a1a3d)">🌙</div>
+        <div class="card-info"><div class="card-title">Night Off</div><div class="card-sub">Feature Film</div></div>
+      </div>
+      <div class="card">
+        <div class="card-img" style="background:linear-gradient(135deg,#1a0a10,#3d1a28)">👑</div>
+        <div class="card-info"><div class="card-title">Queen Treatment</div><div class="card-sub">Documentary</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal-inner">
+    <div class="modal-hero">
+      <div class="modal-hero-text">SpaFlix</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-title">Angelina's Hot Stone Massage</div>
+      <div class="modal-tagline">"The most indulgent experience of the season"</div>
+
+      <div class="messages" id="messages">
+        <div class="msg-item" id="m1">
+          <div class="msg-num">1</div>
+          <div class="msg-text">😁 You deserve to be happy, stress free and relaxed every second of everyday.</div>
+        </div>
+        <div class="msg-item" id="m2">
+          <div class="msg-num">2</div>
+          <div class="msg-text">🌎 You deserve the world and more Angelina.</div>
+        </div>
+        <div class="msg-item" id="m3">
+          <div class="msg-num">3</div>
+          <div class="msg-text">❤️ Wallah You are the best thing that's ever happened to me w 3njad i thank god everyday for you being in my life.</div>
+        </div>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <div class="detail-grid">
+        <div class="detail-cell">
+          <div class="detail-cell-label">Where</div>
+          <div class="detail-cell-val">Phens Wellness & Massagen</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-cell-label">Treatment</div>
+          <div class="detail-cell-val">Hot Stone Massage 🔥</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-cell-label">Date</div>
+          <div class="detail-cell-val">Tuesday, March 31st</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-cell-label">Time</div>
+          <div class="detail-cell-val">3:30 PM ✨</div>
+        </div>
+        <div class="detail-cell" style="grid-column: 1 / -1;">
+          <div class="detail-cell-label">Duration</div>
+          <div class="detail-cell-val">1 Hour 30 Minutes</div>
+        </div>
+      </div>
+
+      <a class="maps-btn" href="https://maps.app.goo.gl/KBSJrL9HVEKTDUWL7?g_st=ipc" target="_blank">
+        📍 &nbsp; View on Google Maps
+      </a>
+
+      <div class="modal-closing">
+        Tonight, not a single thing is yours to worry about.<br>
+        <em>Just close your eyes and let the warmth do its thing.</em><br><br>Make sure to have a huge smile and keep it on that beautiful face of yours. 😊<br><br>
+        Enjoy It, Have Fun ❤️
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Generate ember particles
+  function makeEmbers(container, count) {
+    for (let i = 0; i < count; i++) {
+      const e = document.createElement('div');
+      e.className = container === 'embers' ? 'ember' : 'modal-ember';
+      const size = Math.random() * 4 + 2;
+      e.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*100}%;
+        animation-duration:${6 + Math.random()*8}s;
+        animation-delay:${Math.random()*6}s;
+      `;
+      document.getElementById(container)?.appendChild(e);
+    }
+  }
+
+  // Intro → App transition
+  setTimeout(() => {
+    document.getElementById('intro').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      makeEmbers('embers', 18);
+    }, 1000);
+  }, 4500);
+
+  // Modal
+  function openModal() {
+    const overlay = document.getElementById('modal');
+    overlay.classList.add('open');
+    // Animate messages with word flow
+    setTimeout(() => animateMessages(), 300);
+  }
+
+  function animateMessages() {
+    ['m1','m2','m3'].forEach((id, i) => {
+      setTimeout(() => {
+        const item = document.getElementById(id);
+        item.classList.add('show');
+        // Word flow
+        const textEl = item.querySelector('.msg-text');
+        const words = textEl.textContent.trim().split(' ');
+        textEl.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
+        const wordEls = textEl.querySelectorAll('.word');
+        wordEls.forEach((w, wi) => {
+          setTimeout(() => w.classList.add('flow'), wi * 70);
+        });
+      }, i * 900);
+    });
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+</script>
+</body>
+</html>
